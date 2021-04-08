@@ -26,8 +26,8 @@ flutter:
         pluginClass: FlutterMidiPlugin
       # web:
       #   default_package: flutter_midi_web
-      # macos:
-      #   pluginClass: FlutterMidiPlugin
+      macos:
+        pluginClass: FlutterMidiPlugin
 
 dev_dependencies:
   flutter_test:

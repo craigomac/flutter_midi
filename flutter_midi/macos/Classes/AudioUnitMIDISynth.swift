@@ -59,7 +59,7 @@ class AudioUnitMIDISynth: NSObject {
         var status = OSStatus(noErr)
 
         status = NewAUGraph(&processingGraph)
-//        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
 
         createIONode()
 
@@ -67,13 +67,13 @@ class AudioUnitMIDISynth: NSObject {
 
         // now do the wiring. The graph needs to be open before you call AUGraphNodeInfo
         status = AUGraphOpen(self.processingGraph!)
-//        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
 
         status = AUGraphNodeInfo(self.processingGraph!, self.midisynthNode, nil, &midisynthUnit)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
 
         status = AUGraphNodeInfo(self.processingGraph!, self.ioNode, nil, &ioUnit)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
 
 
         let synthOutputElement: AudioUnitElement = 0
@@ -83,18 +83,18 @@ class AudioUnitMIDISynth: NSObject {
                                          self.midisynthNode, synthOutputElement, // srcnode, SourceOutputNumber
             self.ioNode, ioUnitInputElement) // destnode, DestInputNumber
 
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
     }
 
     /// Create the Output Node and add it to the `AUGraph`.
     func createIONode() {
         var cd = AudioComponentDescription(
             componentType: OSType(kAudioUnitType_Output),
-            componentSubType: OSType(kAudioUnitSubType_MIDISynth),
+            componentSubType: OSType(kAudioUnitSubType_DefaultOutput),
             componentManufacturer: OSType(kAudioUnitManufacturer_Apple),
             componentFlags: 0, componentFlagsMask: 0)
         let status = AUGraphAddNode(self.processingGraph!, &cd, &ioNode)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
     }
 
     /// Create the Synth Node and add it to the `AUGraph`.
@@ -104,8 +104,8 @@ class AudioUnitMIDISynth: NSObject {
             componentSubType: OSType(kAudioUnitSubType_MIDISynth),
             componentManufacturer: OSType(kAudioUnitManufacturer_Apple),
             componentFlags: 0, componentFlagsMask: 0)
-//        let status = AUGraphAddNode(self.processingGraph!, &cd, &midisynthNode)
-        // AudioUtils.CheckError(status)
+        let status = AUGraphAddNode(self.processingGraph!, &cd, &midisynthNode)
+        //AudioUtils.CheckError(status)
     }
 
 
@@ -124,7 +124,7 @@ class AudioUnitMIDISynth: NSObject {
                 &bankURL,
                 UInt32(MemoryLayout<URL>.size))
 
-            // AudioUtils.CheckError(status)
+            //AudioUtils.CheckError(status)
             print("loaded sound font")
         } else {
             print("Could not load sound font")
@@ -158,16 +158,16 @@ class AudioUnitMIDISynth: NSObject {
             0,
             &enabled,
             UInt32(MemoryLayout<UInt32>.size))
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
 
         //        let bankSelectCommand = UInt32(0xB0 | 0)
         //        status = MusicDeviceMIDIEvent(self.midisynthUnit, bankSelectCommand, 0, 0, 0)
 
         let pcCommand = UInt32(0xC0 | channel)
         status = MusicDeviceMIDIEvent(self.midisynthUnit!, pcCommand, patch1, 0, 0)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
         status = MusicDeviceMIDIEvent(self.midisynthUnit!, pcCommand, patch2, 0, 0)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
 
         enabled = UInt32(0)
         status = AudioUnitSetProperty(
@@ -177,7 +177,7 @@ class AudioUnitMIDISynth: NSObject {
             0,
             &enabled,
             UInt32(MemoryLayout<UInt32>.size))
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
 
         // at this point the patches are loaded. You still have to send a program change at "play time" for the synth
         // to switch to that patch
@@ -191,20 +191,20 @@ class AudioUnitMIDISynth: NSObject {
     func isGraphInitialized() -> Bool {
         var outIsInitialized = DarwinBoolean(false)
         let status = AUGraphIsInitialized(self.processingGraph!, &outIsInitialized)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
         return outIsInitialized.boolValue
     }
 
     /// Initializes the `AUGraph.
     func initializeGraph() {
         let status = AUGraphInitialize(self.processingGraph!)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
     }
 
     /// Starts the `AUGraph`
     func startGraph() {
         let status = AUGraphStart(self.processingGraph!)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
     }
 
     /// Check to see if the `AUGraph` is running.
@@ -213,7 +213,7 @@ class AudioUnitMIDISynth: NSObject {
     func isGraphRunning() -> Bool {
         var isRunning = DarwinBoolean(false)
         let status = AUGraphIsRunning(self.processingGraph!, &isRunning)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
         return isRunning.boolValue
     }
 
@@ -235,9 +235,9 @@ class AudioUnitMIDISynth: NSObject {
 //        generateRandomPitch()
 //        print(pitch)
 //        status = MusicDeviceMIDIEvent(self.midisynthUnit!, pcCommand, patch1, 0, 0)
-//        // AudioUtils.CheckError(status)
+//        AudioUtils.CheckError(status)
 //        status = MusicDeviceMIDIEvent(self.midisynthUnit!, noteCommand, pitch, 64, 0)
-//        // AudioUtils.CheckError(status)
+//        AudioUtils.CheckError(status)
 //    }
 //
 //    /// Send a note off message using patch1 on channel 0
@@ -246,7 +246,7 @@ class AudioUnitMIDISynth: NSObject {
 //        let noteCommand = UInt32(0x80 | channel)
 //        var status = OSStatus(noErr)
 //        status = MusicDeviceMIDIEvent(self.midisynthUnit!, noteCommand, pitch, 0, 0)
-//        // AudioUtils.CheckError(status)
+//        AudioUtils.CheckError(status)
 //    }
 //
 //    /// Send a note on message using patch2 on channel 0
@@ -260,9 +260,9 @@ class AudioUnitMIDISynth: NSObject {
 //        //generateRandomPitch()
 //        print(pitch)
 //        status = MusicDeviceMIDIEvent(self.midisynthUnit!, pcCommand, patch2, 0, 0)
-//        // AudioUtils.CheckError(status)
+//        AudioUtils.CheckError(status)
 //        status = MusicDeviceMIDIEvent(self.midisynthUnit!, noteCommand, pitch, 64, 0)
-//        // AudioUtils.CheckError(status)
+//        AudioUtils.CheckError(status)
 //    }
 //
 //    /// Send a note off message using patch2 on channel 0
@@ -271,7 +271,7 @@ class AudioUnitMIDISynth: NSObject {
 //        let noteCommand = UInt32(0x80 | channel)
 //        var status = OSStatus(noErr)
 //        status = MusicDeviceMIDIEvent(self.midisynthUnit!, noteCommand, pitch, 0, 0)
-//        // AudioUtils.CheckError(status)
+//        AudioUtils.CheckError(status)
 //    }
 //
 
@@ -284,9 +284,9 @@ class AudioUnitMIDISynth: NSObject {
         var status = OSStatus(noErr)
 
         status = MusicDeviceMIDIEvent(self.midisynthUnit!, pcCommand, patch2, 0, 0)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
         status = MusicDeviceMIDIEvent(self.midisynthUnit!, noteCommand, UInt32(midi), 64, 0)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
     }
 
     /// Send a note off message using patch2 on channel 0
@@ -295,7 +295,7 @@ class AudioUnitMIDISynth: NSObject {
         let noteCommand = UInt32(0x80 | channel)
         var status = OSStatus(noErr)
         status = MusicDeviceMIDIEvent(self.midisynthUnit!, noteCommand, UInt32(midi), 0, 0)
-        // AudioUtils.CheckError(status)
+        //AudioUtils.CheckError(status)
     }
     
     
@@ -420,18 +420,18 @@ class AudioUnitMIDISynth: NSObject {
         var status = NewMusicPlayer(&musicPlayer)
         if status != OSStatus(noErr) {
             print("bad status \(status) creating player")
-            // AudioUtils.CheckError(status)
+            //AudioUtils.CheckError(status)
         }
         
         status = MusicPlayerSetSequence(musicPlayer!, musicSequence)
         if status != OSStatus(noErr) {
             print("setting sequence \(status)")
-            // AudioUtils.CheckError(status)
+            //AudioUtils.CheckError(status)
         }
         status = MusicPlayerPreroll(musicPlayer!)
         if status != OSStatus(noErr) {
             print("prerolling player \(status)")
-            // AudioUtils.CheckError(status)
+            //AudioUtils.CheckError(status)
         }
         return musicPlayer!
     }
@@ -447,7 +447,7 @@ class AudioUnitMIDISynth: NSObject {
             status = MusicPlayerStop(musicPlayer)
             if status != noErr {
                 print("Error stopping \(status)")
-                // AudioUtils.CheckError(status)
+                //AudioUtils.CheckError(status)
                 return
             }
         }
@@ -455,17 +455,16 @@ class AudioUnitMIDISynth: NSObject {
         status = MusicPlayerSetTime(musicPlayer, 0)
         if status != noErr {
             print("setting time \(status)")
-            // AudioUtils.CheckError(status)
+            //AudioUtils.CheckError(status)
             return
         }
         
         status = MusicPlayerStart(musicPlayer)
         if status != noErr {
             print("Error starting \(status)")
-            // AudioUtils.CheckError(status)
+            //AudioUtils.CheckError(status)
             return
         }
     }
     
 }
-
